@@ -1,0 +1,1 @@
+test("WelcomeScreen render", async () => {});
