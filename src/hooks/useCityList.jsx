@@ -15,25 +15,27 @@ const handleError = (error, setError) => {
   }
 };
 
-const useCityList = (cities, allWeather, onSetAllWeather) => {
+const useCityList = (cities, allWeather, actions) => {
 //   const [allWeather, setAllWeather] = useState({});
   const [error, setError] = useState(null);
   useEffect(() => {
       const setWeather = async ({ city, countryCode }) => {
           const url = getWeatherUrl({ city, countryCode });
           try {
-              onSetAllWeather({ [getCityCode(city, countryCode)]: {} });
+              actions({ type: 'SET_ALL_WEATHER', payload: { [getCityCode(city, countryCode)]: {} } });
+              // onSetAllWeather({ [getCityCode(city, countryCode)]: {} });
               const response = await axios.get(url);
               const allWeatherTurned = getAllWeather(response, city, countryCode);
             //   setAllWeather(allWeather => ({ ...allWeather, ...allWeatherTurned }));
-            onSetAllWeather(allWeatherTurned);
+            // onSetAllWeather(allWeatherTurned);
+            actions({ type: 'SET_ALL_WEATHER', payload: allWeatherTurned });
           } catch (error) {
               handleError(error, setError);
           };
       };
       cities.filter(({ city, countryCode }) => !allWeather[getCityCode(city, countryCode)])
         .forEach(setWeather);
-  }, [cities, allWeather, onSetAllWeather]);
+  }, [cities, allWeather, actions]);
 
   return { error, setError };
 }
